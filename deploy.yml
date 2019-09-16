@@ -1,0 +1,88 @@
+AppName: Serverless-userCRUD
+Description: Serverless CRUD API
+Provider: AWS
+Resources:
+  api:
+    Type: ApiGateway
+    Properties:
+      Name: users
+      Description: Api for /user
+      EndpointConfiguration: REGIONAL
+      Paths:
+        /users:
+          - get
+          - post
+        /users/{id}:
+          - get
+          - put
+          - delete
+    
+  getUser:
+    Type: Lambda
+    Properties:
+      FunctionName: getUser
+      src: src/userCRUD/getUser.py
+      Handler: handler.handler
+      Runtime: python3.7
+      Events:
+        - http:
+            Path: /users/{id}
+            Method: GET
+
+  postUser:
+    Type: Lambda
+    Properties:
+      FunctionName: postUser
+      src: src/userCRUD/createUser.py
+      Handler: handler.handler
+      Runtime: python3.7
+      Events:
+        - http:
+            Path: /users/
+            Method: POST
+
+  listUser:
+    Type: Lambda
+    Properties:
+      FunctionName: listUser
+      src: src/userCRUD/listUser.py
+      Handler: handler.handler
+      Runtime: python3.7
+      Events:
+        - http:
+            Path: /users/
+            Method: GET
+
+  updateUser:
+    Type: Lambda
+    Properties:
+      FunctionName: updateUser
+      src: src/userCRUD/updateUser.py
+      Handler: handler.handler
+      Runtime: python3.7
+      Events:
+        - http:
+            Path: /users/{id}
+            Method: PUT
+
+  deleteUser:
+    Type: Lambda
+    Properties:
+      FunctionName: deleteUser
+      src: src/userCRUD/deleteUser.py
+      Handler: handler.handler
+      Runtime: python3.7
+      Events:
+        - api:
+            Path: /users/{id}
+            Method: DELETE
+
+  usersTable:
+    Type: DynamoDB
+    Properties:
+      TableName: usersTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+     
+      
